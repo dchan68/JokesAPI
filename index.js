@@ -75,8 +75,33 @@ app.patch("/jokes/:id", function(req, res){
 })
 
 //7. DELETE Specific joke
+app.delete("/jokes/:id", function(req, res){
+  const id = parseInt(req.params.id);
+  const searchIndex = jokes.findIndex((joke) => joke.id === id);
+  //if the specific joke exist
+  if (searchIndex > -1){
+    //removes the specific joke at its specific index
+    jokes.splice(searchIndex, 1);
+    res.sendStatus(200);
+  } else {
+    res.status(404).json({
+      error: `Joke with id: ${id} not found. No jokes were deleted.`
+    })
+  }
+})
 
 //8. DELETE All jokes
+app.delete("/jokes", function(req, res){
+  const userKey = req.query.key;
+  if (userKey === masterKey){
+    jokes = [];
+    res.sendStatus(200);
+  } else {
+    res.status(404).json({
+      error: `You are not authorised to perform this action.`
+    })
+  }
+})
 
 app.listen(port, () => {
   console.log(`Successfully started server on port ${port}.`);
